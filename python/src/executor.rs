@@ -236,12 +236,11 @@ impl BackgroundExecutor {
             };
 
             if let Some(output) = maybe_output {
-                if let Err(err) = pump() {
-                    log::warn!(
-                        "Ignoring progress callback error after operation completed successfully: {}",
-                        err
-                    );
-                }
+                // when the index build finishes so fast that no pump cycles
+                // occurred during execution (common on Python 3.14 due to
+                // GIL/async scheduling changes), all events sit in the
+                // channel buffer and get drained after completion
+                pump()?;
                 return Ok(output);
             }
         }
