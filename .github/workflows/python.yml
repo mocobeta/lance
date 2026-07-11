@@ -97,7 +97,7 @@ jobs:
     timeout-minutes: 45
     strategy:
       matrix:
-        python-minor-version: ["10", "14"]
+        python-minor-version: ["10", "13", "14"]
     name: "Python Linux 3.${{ matrix.python-minor-version }} x86_64"
     runs-on: "ubuntu-24.04-4x"
     defaults:
