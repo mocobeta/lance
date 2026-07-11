@@ -49,8 +49,8 @@ build-backend = "maturin"
 [project.optional-dependencies]
 tests = [
     "boto3",
-    "datasets",
-    "duckdb",
+    "datasets==4.4.0",
+    "duckdb>=1.5.0,<1.6.0",
     "ml_dtypes",
     "pillow",
     "pandas",
