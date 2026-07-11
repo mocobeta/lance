@@ -2221,8 +2221,8 @@ tests = [
 requires-dist = [
     { name = "boto3", marker = "extra == 'tests'" },
     { name = "datafusion", marker = "extra == 'tests'", specifier = ">=53,<54" },
-    { name = "datasets", marker = "extra == 'tests'" },
-    { name = "duckdb", marker = "extra == 'tests'" },
+    { name = "datasets", marker = "extra == 'tests'", specifier = "==4.4.0" },
+    { name = "duckdb", marker = "extra == 'tests'", specifier = ">=1.5.0,<1.6.0" },
     { name = "geoarrow-rust-core", marker = "extra == 'geo'" },
     { name = "geoarrow-rust-io", marker = "extra == 'geo'" },
     { name = "lance-namespace", specifier = ">=0.8.5,<0.9" },
