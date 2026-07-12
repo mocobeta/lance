@@ -206,7 +206,7 @@ def gen_rand_part_ids(dataset, dest_uri):
 
 
 @pytest.mark.benchmark(group="transform_vectors")
-def test_transform_vectors_no_precomputed_parts(test, tmpdir, benchmark):
+def test_transform_vectors_no_precomputed_parts(test_dataset, tmpdir, benchmark):
     ivf = rand_ivf(test_dataset)
     pq = rand_pq(test_dataset, ivf)
     builder = IndicesBuilder(test_dataset, "vector")
