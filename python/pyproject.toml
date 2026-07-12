@@ -91,6 +91,9 @@ dev = [
 ]
 benchmarks = [
     "pytest-benchmark==5.1.0",
+    "torch>=2.0",
+    "geoarrow-rust-core",
+    "geoarrow-rust-io",
 ]
 
 [tool.uv]
