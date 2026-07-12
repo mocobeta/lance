@@ -216,4 +216,4 @@ def test_sample_nested_integer(tmp_path: Path, benchmark):
 
     result = benchmark.pedantic(sample, rounds=30, iterations=1)
 
-    assert result.num_rows == NUM_ROWS
+    assert result.num_rows == len(indices)
