@@ -165,7 +165,7 @@ def test_sample_integer(tmp_path: Path, benchmark, version):
 
     result = benchmark.pedantic(sample, rounds=30, iterations=1)
 
-    assert result.num_rows == NUM_ROWS
+    assert result.num_rows == len(indices)
 
 
 @pytest.mark.benchmark(group="sample_single_column")
