@@ -140,7 +140,7 @@ def test_optimize_index(
         index_type="IVF_PQ",
         metric_type="L2",
         num_partitions=num_partitions,
-        num_sub_vectors=64,
+        num_sub_vectors=2,
         num_bits=8,
         replace=True,
     )
