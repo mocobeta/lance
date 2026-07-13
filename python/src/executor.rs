@@ -20,7 +20,7 @@ use pyo3::{PyResult, Python, exceptions::PyRuntimeError};
 pub const SIGNAL_CHECK_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
 
 fn is_python314_or_later(py: Option<Python<'_>>) -> bool {
-    py.map_or(true, |py| py.version_info() >= (3, 14))
+    py.map_or(false, |py| py.version_info() >= (3, 14))
 }
 
 /// A wrapper around tokio runtime.
