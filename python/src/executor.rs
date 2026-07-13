@@ -199,6 +199,8 @@ impl BackgroundExecutor {
         F::Output: Send,
         P: FnMut() -> PyResult<()>,
     {
+        let should_propagate_on_completion = is_python314_or_later(py);
+
         let mut future = std::pin::pin!(future);
 
         loop {
@@ -247,7 +249,7 @@ impl BackgroundExecutor {
                 // only be visible in this post-completion drain, so we propagate
                 // errors for 3.14+. For ≤ 3.13 we keep the old tolerant behavior
                 // to avoid spurious failures when scheduling shifts slightly.
-                if is_python314_or_later(py) {
+                if should_propagate_on_completion {
                     pump()?;
                 } else {
                     if let Err(err) = pump() {
