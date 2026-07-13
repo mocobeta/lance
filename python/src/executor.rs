@@ -19,6 +19,10 @@ use pyo3::{PyResult, Python, exceptions::PyRuntimeError};
 
 pub const SIGNAL_CHECK_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
 
+fn is_python314_or_later(py: Option<Python<'_>>) -> bool {
+    py.map_or(true, |py| py.version_info() >= (3, 14))
+}
+
 /// A wrapper around tokio runtime.
 ///
 /// This is used to spawn tasks in the background and wait synchronously for them
@@ -236,11 +240,23 @@ impl BackgroundExecutor {
             };
 
             if let Some(output) = maybe_output {
-                // when the index build finishes so fast that no pump cycles
-                // occurred during execution (common on Python 3.14 due to
-                // GIL/async scheduling changes), all events sit in the
-                // channel buffer and get drained after completion
-                pump()?;
+                // When the index build finishes so fast that no pump cycles
+                // occurred during execution, pending events sit in the channel
+                // buffer and get drained after completion. Python ≥ 3.14 changed
+                // GIL/async scheduling timing such that callback invocations may
+                // only be visible in this post-completion drain, so we propagate
+                // errors for 3.14+. For ≤ 3.13 we keep the old tolerant behavior
+                // to avoid spurious failures when scheduling shifts slightly.
+                if is_python314_or_later(py) {
+                    pump()?;
+                } else {
+                    if let Err(err) = pump() {
+                        log::warn!(
+                            "Ignoring progress callback error after operation completed successfully: {}",
+                            err
+                        );
+                    }
+                }
                 return Ok(output);
             }
         }
