@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 
+import pytest
 from packaging.version import InvalidVersion, Version
 
 try:
@@ -110,18 +111,19 @@ _COMPAT_SKIP: list[tuple[str, tuple[int, int]]] = [
 
 
 def _skip_reason(lance_version: str) -> Optional[str]:
-    """Return a pytest.skip message if this lance/Python combo is whitelisted, else None."""
+    """Return a skip reason if this lance/Python combo is whitelisted, else None."""
+    try:
+        ver = Version(lance_version)
+    except InvalidVersion:
+        return None
     py = sys.version_info[:2]
     for max_lance, min_python in _COMPAT_SKIP:
-        try:
-            if Version(lance_version) <= Version(max_lance) and py >= min_python:
-                py_str = f"{py[0]}.{py[1]}"
-                return (
-                    f"Lance {lance_version} + Python {py_str}: whitelisted skip "
-                    f"(see _COMPAT_SKIP in venv_manager.py)"
-                )
-        except InvalidVersion:
-            pass
+        if ver <= Version(max_lance) and py >= min_python:
+            py_str = f"{py[0]}.{py[1]}"
+            return (
+                f"Lance {lance_version} + Python {py_str}: whitelisted skip "
+                f"(see _COMPAT_SKIP in venv_manager.py)"
+            )
     return None
 
 
@@ -407,8 +409,6 @@ class VenvExecutor:
 
         reason = _skip_reason(self.version)
         if reason:
-            import pytest
-
             pytest.skip(reason)
 
         # Ensure subprocess is running
@@ -460,8 +460,6 @@ class VenvExecutor:
 
         # Remove venv directory
         if self.venv_path.exists():
-            import shutil
-
             shutil.rmtree(self.venv_path)
         self._created = False
 
