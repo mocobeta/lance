@@ -80,6 +80,7 @@ pub mod index;
 pub mod mem_wal;
 mod metadata;
 pub mod optimize;
+pub(crate) mod overlay;
 pub mod progress;
 pub mod refs;
 pub(crate) mod rowids;
@@ -2288,6 +2289,13 @@ impl Dataset {
             Some(base_id) => self.base_object_store(base_id).await,
             None => Ok(self.object_store.clone()),
         }
+    }
+
+    /// The `ObjectStoreParams` this dataset was opened with, or `None` when
+    /// opened without explicit params. Lets a caller re-open a derived path
+    /// (e.g. a MemWAL flushed generation) with the same store this dataset used.
+    pub fn store_params(&self) -> Option<&ObjectStoreParams> {
+        self.store_params.as_deref()
     }
 
     pub(crate) async fn object_store_for_data_file(
